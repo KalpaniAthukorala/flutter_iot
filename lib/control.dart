@@ -124,6 +124,16 @@ class _ControlPageState extends State<ControlPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('ESP32 Control'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () {
+              // Implement logout logic
+              Navigator.pushReplacementNamed(context, '/login');
+            },
+          ),
+        ],
+        automaticallyImplyLeading: false, // Set this property to false
       ),
       body: Center(
         child: Column(
