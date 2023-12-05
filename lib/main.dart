@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_iot/manu.dart';
 import 'control.dart';
 
 void main() {
@@ -11,6 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         primaryColor: const Color.fromARGB(255, 154, 128, 197),
@@ -23,7 +25,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) => LoginPage(),
         '/home': (context) => MyHomePage(title: 'Flutter Demo Home Page'),
-        '/control': (context) => ControlPage(),
+        '/control': (context) => Manu(),
       },
     );
   }

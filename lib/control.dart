@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:flutter_switch/flutter_switch.dart';
 
 class ControlPage extends StatefulWidget {
   @override
@@ -15,9 +16,12 @@ class _ControlPageState extends State<ControlPage> {
   String _transcription = '';
 
   // Track the state of each light button
-  bool light1On = true;
-  bool light2On = true;
+  bool light1On = false;
+  bool light2On = false;
   bool light3On = false;
+
+  // Track the state of the door lock
+  bool doorLockOn = false;
 
   @override
   void initState() {
@@ -48,18 +52,25 @@ class _ControlPageState extends State<ControlPage> {
       setState(() {
         light1On = !light1On;
       });
-      _sendCommand('26', light1On ? 'on' : 'off');
+      _sendCommand('26', light1On ? 'off' : 'on');
     } else if (lightNumber == 2) {
       setState(() {
         light2On = !light2On;
       });
-      _sendCommand('27', light2On ? 'on' : 'off');
+      _sendCommand('27', light2On ? 'off' : 'on');
     } else if (lightNumber == 3) {
       setState(() {
         light3On = !light3On;
       });
-      _sendCommand('14', light3On ? 'on' : 'off');
+      _sendCommand('14', light3On ? 'off' : 'on');
     }
+  }
+
+  void _toggleDoorLock() {
+    setState(() {
+      doorLockOn = !doorLockOn;
+    });
+    _sendCommand('12', doorLockOn ? 'low' : 'high');
   }
 
   Future<void> _listen() async {
@@ -93,6 +104,8 @@ class _ControlPageState extends State<ControlPage> {
                   .toLowerCase()
                   .contains('switch three')) {
                 _toggleLight(3);
+              } else if (_transcription.toLowerCase().contains('door lock')) {
+                _toggleDoorLock();
               }
 
               // Continue listening
@@ -123,53 +136,78 @@ class _ControlPageState extends State<ControlPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('ESP32 Control'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () {
-              // Implement logout logic
-              Navigator.pushReplacementNamed(context, '/login');
-            },
-          ),
-        ],
-        automaticallyImplyLeading: false, // Set this property to false
+        title: const Text('ESP32 Control'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
-              onPressed: () {
-                _toggleLight(1);
-              },
-              style: light1On
-                  ? ElevatedButton.styleFrom(primary: Colors.green)
-                  : null,
-              child: Text('Toggle Light 1'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                _toggleLight(2);
-              },
-              style: light2On
-                  ? ElevatedButton.styleFrom(primary: Colors.blue)
-                  : null,
-              child: Text('Toggle Light 2'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                _toggleLight(3);
-              },
-              style: light3On
-                  ? ElevatedButton.styleFrom(primary: Colors.yellow)
-                  : null,
-              child: Text('Toggle Light 3'),
-            ),
+            _buildLightSwitch(1),
+            _buildLightSwitch(2),
+            _buildLightSwitch(3),
+            _buildDoorLockSwitch(),
             Text('Transcription: $_transcription'),
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _listen,
+        tooltip: 'Voice Command',
+        child: Icon(Icons.mic),
+      ),
+    );
+  }
+
+  Widget _buildLightSwitch(int lightNumber) {
+    String label = lightNumber == 1 ? 'Light 1' : lightNumber == 2 ? 'Light 2' : 'Light 3';
+    bool isOn = lightNumber == 1 ? light1On : lightNumber == 2 ? light2On : light3On;
+
+    return Column(
+      children: [
+        Text(
+          label,
+          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+        ),
+        FlutterSwitch(
+          value: isOn,
+          onToggle: (value) {
+            _toggleLight(lightNumber);
+          },
+          activeText: 'On',
+          inactiveText: 'Off',
+          activeColor: Colors.green,
+          inactiveColor: Colors.grey,
+          toggleColor: Colors.white,
+          width: 100.0,
+          height: 40.0,
+        ),
+        SizedBox(height: 20.0),
+      ],
+    );
+  }
+
+  Widget _buildDoorLockSwitch() {
+    return Column(
+      children: [
+        Text(
+          'Door Lock',
+          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+        ),
+        FlutterSwitch(
+          value: doorLockOn,
+          onToggle: (value) {
+            _toggleDoorLock();
+          },
+          activeText: 'Locked',
+          inactiveText: 'Unlocked',
+          activeColor: Colors.red,
+          inactiveColor: Colors.grey,
+          toggleColor: Colors.white,
+          width: 100.0,
+          height: 40.0,
+        ),
+        SizedBox(height: 20.0),
+      ],
     );
   }
 }
