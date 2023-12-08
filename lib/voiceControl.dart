@@ -60,8 +60,10 @@ class _VoiceControlState extends State<VoiceControl> {
       if (!doorLockOn) {
         doorLockOn = true;
         _sendCommand('19', doorLockOn ? 'low' : 'high');
-        Future.delayed(const Duration(seconds: 2), () {
+        print("command ex1");
+        Future.delayed(const Duration(seconds: 5), () {
           _sendCommand('19', 'low');
+          print("command ex2");
         });
       }
       
@@ -70,7 +72,7 @@ class _VoiceControlState extends State<VoiceControl> {
       if (doorLockOn) {
          doorLockOn = false;
         _sendCommand('18', doorLockOn ? 'high' : 'low');
-        Future.delayed(const Duration(seconds: 2), () {
+        Future.delayed(const Duration(seconds: 5), () {
           _sendCommand('18', 'low');
         });
       }
@@ -157,139 +159,140 @@ class _VoiceControlState extends State<VoiceControl> {
       appBar: AppBar(
         title: const Text('ESP32 Voice Control'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Column(
-              children: [
-                const Text(
-                  "Light 1",
-                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                ),
-                IgnorePointer(
-                  ignoring: true,
-                  child: FlutterSwitch(
-                    value: light1On,
-                    onToggle: (value) {
-                      //_toggleLight(lightNumber);
-                    },
-                    activeText: 'On',
-                    inactiveText: 'Off',
-                    activeColor: Colors.green,
-                    inactiveColor: Colors.grey,
-                    toggleColor: Colors.white,
-                    width: 100.0,
-                    height: 40.0,
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Column(
+                children: [
+                  const Text(
+                    "Light 1",
+                    style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),
-                ),
-                SizedBox(height: 20.0),
-                const Text(
-                  "Light 2",
-                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                ),
-                IgnorePointer(
-                  ignoring: true,
-                  child: FlutterSwitch(
-                    value: light2On,
-                    onToggle: (value) {
-                      //_toggleLight(lightNumber);
-                    },
-                    activeText: 'On',
-                    inactiveText: 'Off',
-                    activeColor: Colors.green,
-                    inactiveColor: Colors.grey,
-                    toggleColor: Colors.white,
-                    width: 100.0,
-                    height: 40.0,
+                  IgnorePointer(
+                    ignoring: true,
+                    child: FlutterSwitch(
+                      value: light1On,
+                      onToggle: (value) {
+                        //_toggleLight(lightNumber);
+                      },
+                      activeText: 'On',
+                      inactiveText: 'Off',
+                      activeColor: Colors.green,
+                      inactiveColor: Colors.grey,
+                      toggleColor: Colors.white,
+                      width: 100.0,
+                      height: 40.0,
+                    ),
                   ),
-                ),
-                SizedBox(height: 20.0),
-                const Text(
-                  "Light 3",
-                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                ),
-                IgnorePointer(
-                  ignoring: true,
-                  child: FlutterSwitch(
-                    value: light3On,
-                    onToggle: (value) {
-                      //_toggleLight(lightNumber);
-                    },
-                    activeText: 'On',
-                    inactiveText: 'Off',
-                    activeColor: Colors.green,
-                    inactiveColor: Colors.grey,
-                    toggleColor: Colors.white,
-                    width: 100.0,
-                    height: 40.0,
+                  SizedBox(height: 10.0),
+                  const Text(
+                    "Light 2",
+                    style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),
-                ),
-                SizedBox(height: 20.0),
-                                const Text(
-                  "Light 4",
-                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                ),
-                IgnorePointer(
-                  ignoring: true,
-                  child: FlutterSwitch(
-                    value: light4On,
-                    onToggle: (value) {
-                      //_toggleLight(lightNumber);
-                    },
-                    activeText: 'On',
-                    inactiveText: 'Off',
-                    activeColor: Colors.green,
-                    inactiveColor: Colors.grey,
-                    toggleColor: Colors.white,
-                    width: 100.0,
-                    height: 40.0,
+                  IgnorePointer(
+                    ignoring: true,
+                    child: FlutterSwitch(
+                      value: light2On,
+                      onToggle: (value) {
+                        //_toggleLight(lightNumber);
+                      },
+                      activeText: 'On',
+                      inactiveText: 'Off',
+                      activeColor: Colors.green,
+                      inactiveColor: Colors.grey,
+                      toggleColor: Colors.white,
+                      width: 100.0,
+                      height: 40.0,
+                    ),
                   ),
-                ),
-                SizedBox(height: 20.0),
-                const Text(
-                  "Door Lock",
-                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                ),
-                IgnorePointer(
-                  ignoring: true,
-                  child: FlutterSwitch(
-                    value: doorLockOn,
-                    onToggle: (value) {
-                      //_toggleLight(lightNumber);
-                    },
-                    activeText: 'On',
-                    inactiveText: 'Off',
-                    activeColor: Colors.green,
-                    inactiveColor: Colors.grey,
-                    toggleColor: Colors.white,
-                    width: 100.0,
-                    height: 40.0,
+                  SizedBox(height: 10.0),
+                  const Text(
+                    "Light 3",
+                    style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),
-                ),
-                SizedBox(height: 20.0),
-              ],
-            ),
-            //.............
-            SingleChildScrollView(
-              reverse: true,
-              padding: const EdgeInsets.all(30).copyWith(bottom: 150),
-              child: Center(
-                child: SubstringHighlight(
-                  text: text,
-                  terms: Command.all,
-                  textStyle: const TextStyle(
-                      fontSize: 30,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w300),
-                  textStyleHighlight: const TextStyle(
-                      fontSize: 32,
-                      color: Colors.red,
-                      fontWeight: FontWeight.w400),
+                  IgnorePointer(
+                    ignoring: true,
+                    child: FlutterSwitch(
+                      value: light3On,
+                      onToggle: (value) {
+                        //_toggleLight(lightNumber);
+                      },
+                      activeText: 'On',
+                      inactiveText: 'Off',
+                      activeColor: Colors.green,
+                      inactiveColor: Colors.grey,
+                      toggleColor: Colors.white,
+                      width: 100.0,
+                      height: 40.0,
+                    ),
+                  ),
+                  SizedBox(height: 10.0),
+                                  const Text(
+                    "Light 4",
+                    style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                  ),
+                  IgnorePointer(
+                    ignoring: true,
+                    child: FlutterSwitch(
+                      value: light4On,
+                      onToggle: (value) {
+                        //_toggleLight(lightNumber);
+                      },
+                      activeText: 'On',
+                      inactiveText: 'Off',
+                      activeColor: Colors.green,
+                      inactiveColor: Colors.grey,
+                      toggleColor: Colors.white,
+                      width: 100.0,
+                      height: 40.0,
+                    ),
+                  ),
+                  SizedBox(height: 10.0),
+                  const Text(
+                    "Door Lock",
+                    style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                  ),
+                  IgnorePointer(
+                    ignoring: true,
+                    child: FlutterSwitch(
+                      value: doorLockOn,
+                      onToggle: (value) {
+                        //_toggleLight(lightNumber);
+                      },
+                      activeText: 'On',
+                      inactiveText: 'Off',
+                      activeColor: Colors.green,
+                      inactiveColor: Colors.grey,
+                      toggleColor: Colors.white,
+                      width: 100.0,
+                      height: 40.0,
+                    ),
+                  ),
+                ],
+              ),
+              //.............
+              SingleChildScrollView(
+                reverse: true,
+                padding: const EdgeInsets.all(30).copyWith(bottom: 150),
+                child: Center(
+                  child: SubstringHighlight(
+                    text: text,
+                    terms: Command.all,
+                    textStyle: const TextStyle(
+                        fontSize: 30,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w300),
+                    textStyleHighlight: const TextStyle(
+                        fontSize: 32,
+                        color: Colors.red,
+                        fontWeight: FontWeight.w400),
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
