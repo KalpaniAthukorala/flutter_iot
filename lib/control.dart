@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:flutter_switch/flutter_switch.dart';
 
 class ControlPage extends StatefulWidget {
@@ -11,26 +10,17 @@ class ControlPage extends StatefulWidget {
 class _ControlPageState extends State<ControlPage> {
   final String esp32IpAddress =
       '192.168.1.100'; // Replace with your ESP32's IP address
-  late stt.SpeechToText _speech;
-  bool _isListening = false;
+
   String _transcription = '';
 
   // Track the state of each light button
   bool light1On = false;
   bool light2On = false;
   bool light3On = false;
+  bool light4On = false;
 
   // Track the state of the door lock
   bool doorLockOn = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _speech = stt.SpeechToText();
-
-    // Automatically start listening when the widget is initialized
-    _listen();
-  }
 
   Future<void> _sendCommand(String pin, String action) async {
     print('Sending command - Pin: $pin, Action: $action');
@@ -48,88 +38,60 @@ class _ControlPageState extends State<ControlPage> {
   }
 
   void _toggleLight(int lightNumber) {
-    if (lightNumber == 1) {
-      setState(() {
-        light1On = !light1On;
-      });
-      _sendCommand('26', light1On ? 'off' : 'on');
-    } else if (lightNumber == 2) {
-      setState(() {
-        light2On = !light2On;
-      });
-      _sendCommand('27', light2On ? 'off' : 'on');
-    } else if (lightNumber == 3) {
-      setState(() {
-        light3On = !light3On;
-      });
-      _sendCommand('14', light3On ? 'off' : 'on');
+    String pin;
+    switch (lightNumber) {
+      case 1:
+        pin = '12';
+        break;
+      case 2:
+        pin = '14';
+        break;
+      case 3:
+        pin = '26';
+        break;
+      case 4:
+        pin = '27';
+        break;
+      default:
+        return;
     }
+
+    setState(() {
+      if (lightNumber == 1) {
+        light1On = !light1On;
+      } else if (lightNumber == 2) {
+        light2On = !light2On;
+      } else if (lightNumber == 3) {
+        light3On = !light3On;
+      } else if (lightNumber == 4) {
+        light4On = !light4On;
+      }
+    });
+
+    _sendCommand(pin, light1On ? 'off' : 'on');
   }
 
   void _toggleDoorLock() {
     setState(() {
       doorLockOn = !doorLockOn;
     });
-    _sendCommand('12', doorLockOn ? 'low' : 'high');
-  }
-
-  Future<void> _listen() async {
-    if (!_isListening) {
-      bool available = await _speech.initialize(
-        onStatus: (status) {
-          print('Status: $status');
-        },
-        onError: (error) {
-          print('Error: $error');
-        },
-      );
-
-      if (available) {
-        setState(() {
-          _isListening = true;
-        });
-
-        _speech.listen(
-          onResult: (result) {
-            setState(() {
-              _transcription = result.recognizedWords;
-              print('Transcription: $_transcription');
-
-              // Check for commands
-              if (_transcription.toLowerCase().contains('switch one')) {
-                _toggleLight(1);
-              } else if (_transcription.toLowerCase().contains('switch two')) {
-                _toggleLight(2);
-              } else if (_transcription
-                  .toLowerCase()
-                  .contains('switch three')) {
-                _toggleLight(3);
-              } else if (_transcription.toLowerCase().contains('door lock')) {
-                _toggleDoorLock();
-              }
-
-              // Continue listening
-              _listen();
-            });
-          },
-        );
-      }
-    } else {
-      setState(() {
-        _isListening = false;
+    // _sendCommand('19', doorLockOn ? 'off' : 'on');
+    if (doorLockOn) {
+      //doorLockOn = true;
+      _sendCommand('19', doorLockOn ? 'off' : 'on');
+      print("command ex1");
+      Future.delayed(const Duration(seconds: 5), () {
+        _sendCommand('19', 'on');
+        print("command ex2");
       });
-
-      _speech.stop();
     }
-  }
-
-  @override
-  void dispose() {
-    // Stop listening when the widget is disposed
-    if (_isListening) {
-      _speech.stop();
+    if (!doorLockOn) {
+      //doorLockOn = false;
+      _sendCommand('18', doorLockOn ? 'on' : 'off');
+      Future.delayed(const Duration(seconds: 5), () {
+        _sendCommand('18', 'on');
+      });
     }
-    super.dispose();
   }
 
   @override
@@ -145,22 +107,30 @@ class _ControlPageState extends State<ControlPage> {
             _buildLightSwitch(1),
             _buildLightSwitch(2),
             _buildLightSwitch(3),
+            _buildLightSwitch(4),
             _buildDoorLockSwitch(),
             Text('Transcription: $_transcription'),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _listen,
-        tooltip: 'Voice Command',
-        child: Icon(Icons.mic),
-      ),
     );
   }
 
   Widget _buildLightSwitch(int lightNumber) {
-    String label = lightNumber == 1 ? 'Light 1' : lightNumber == 2 ? 'Light 2' : 'Light 3';
-    bool isOn = lightNumber == 1 ? light1On : lightNumber == 2 ? light2On : light3On;
+    String label = lightNumber == 1
+        ? 'Light 1'
+        : lightNumber == 2
+            ? 'Light 2'
+            : lightNumber == 3
+                ? 'Light 3'
+                : 'Light 4';
+    bool isOn = lightNumber == 1
+        ? light1On
+        : lightNumber == 2
+            ? light2On
+            : lightNumber == 3
+                ? light3On
+                : light4On;
 
     return Column(
       children: [

@@ -52,34 +52,28 @@ class _VoiceControlState extends State<VoiceControl> {
     } else if (lightNumber == Command.switchThree) {
       light3On = !light3On;
       _sendCommand('26', light3On ? 'off' : 'on');
-    }else if (lightNumber == Command.switchFour) {
+    } else if (lightNumber == Command.switchFour) {
       light4On = !light4On;
       _sendCommand('27', light4On ? 'off' : 'on');
     } else if (lightNumber == Command.doorlock) {
-    
       if (!doorLockOn) {
         doorLockOn = true;
-        _sendCommand('19', doorLockOn ? 'low' : 'high');
+        _sendCommand('19', doorLockOn ? 'off' : 'on');
         print("command ex1");
         Future.delayed(const Duration(seconds: 5), () {
-          _sendCommand('19', 'low');
+          _sendCommand('19', 'on');
           print("command ex2");
         });
       }
-      
     } else if (lightNumber == Command.doorUnlock) {
-      
       if (doorLockOn) {
-         doorLockOn = false;
-        _sendCommand('18', doorLockOn ? 'high' : 'low');
+        doorLockOn = false;
+        _sendCommand('18', doorLockOn ? 'on' : 'off');
         Future.delayed(const Duration(seconds: 5), () {
-          _sendCommand('18', 'low');
+          _sendCommand('18', 'on');
         });
       }
-      
-    }  
-    
-    else if (lightNumber == Command.allLightOn) {
+    } else if (lightNumber == Command.allLightOn) {
       // Future.delayed(const Duration(seconds: 1),(){   dan
       if (!light1On) {
         light1On = true;
@@ -124,7 +118,7 @@ class _VoiceControlState extends State<VoiceControl> {
         _sendCommand('27', light4On ? 'off' : 'on');
       }
     }
-    
+
     //  print(lightNumber + " " + Command.allLightOn);
   }
 
@@ -168,7 +162,8 @@ class _VoiceControlState extends State<VoiceControl> {
                 children: [
                   const Text(
                     "Light 1",
-                    style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                    style:
+                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),
                   IgnorePointer(
                     ignoring: true,
@@ -189,7 +184,8 @@ class _VoiceControlState extends State<VoiceControl> {
                   SizedBox(height: 10.0),
                   const Text(
                     "Light 2",
-                    style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                    style:
+                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),
                   IgnorePointer(
                     ignoring: true,
@@ -210,7 +206,8 @@ class _VoiceControlState extends State<VoiceControl> {
                   SizedBox(height: 10.0),
                   const Text(
                     "Light 3",
-                    style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                    style:
+                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),
                   IgnorePointer(
                     ignoring: true,
@@ -229,9 +226,10 @@ class _VoiceControlState extends State<VoiceControl> {
                     ),
                   ),
                   SizedBox(height: 10.0),
-                                  const Text(
+                  const Text(
                     "Light 4",
-                    style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                    style:
+                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),
                   IgnorePointer(
                     ignoring: true,
@@ -252,7 +250,8 @@ class _VoiceControlState extends State<VoiceControl> {
                   SizedBox(height: 10.0),
                   const Text(
                     "Door Lock",
-                    style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                    style:
+                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),
                   IgnorePointer(
                     ignoring: true,
